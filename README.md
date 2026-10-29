@@ -1,4 +1,18 @@
 # GGF Beverage Business Dashboard
+
+An interactive Streamlit dashboard for exploring GGF Beverage sales, profitability, raw-material price movements, and forecast scenarios using `FruitsTrxDatasets.xlsx`.
+
+## 🚀 Live Demo
+
+**[Open the GGF Beverage Business Dashboard](https://khofifah-ds-ggf-dashboard-project.streamlit.app/)**
+
+Explore interactive sales analytics, profitability insights, raw-material trends, and forecasting scenarios directly in your browser.
+
+## 📌 Purpose
+
+Turn transaction and raw-material history into understandable business insights. The dashboard is descriptive and exploratory; it is not an audited financial statement, procurement system, or guaranteed forecasting system.
+
+
 ## User Guide
 
 ## 1. Overview
