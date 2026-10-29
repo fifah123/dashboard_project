@@ -14,7 +14,8 @@ The dashboard supports:
 - Forecast evaluation through historical backtesting
 - Scenario analysis for business planning
 
-The dashboard is intended for descriptive and exploratory analysis. Forecasts are estimates based on historical data and should not be interpreted as guaranteed outcomes or audited financial results.
+> [!NOTE]
+> The dashboard is intended for descriptive and exploratory analysis. Forecasts are estimates based on historical data and should not be interpreted as guaranteed outcomes or audited financial results.
 
 ---
 
@@ -106,7 +107,7 @@ Sales transactions can be enriched with product information using `SKU`.
 sales_df = sales_df.merge(
     products_df.drop_duplicates(
         subset=["SKU"],
-        keep="last"
+        keep="last",
     ),
     on="SKU",
     how="left",
@@ -135,33 +136,25 @@ The dashboard can calculate the following KPIs.
 **Gross Sales**
 
 $$
-\text{Gross Sales}
-=
-\sum_{i=1}^{n}\text{TotalSellingPrice}_i
+\text{Gross Sales} = \sum_{i=1}^{n} \text{TotalSellingPrice}_i
 $$
 
 **Total Discount**
 
 $$
-\text{Total Discount}
-=
-\sum_{i=1}^{n}\text{TotalDiscount}_i
+\text{Total Discount} = \sum_{i=1}^{n} \text{TotalDiscount}_i
 $$
 
 **Net Sales**
 
 $$
-\text{Net Sales}
-=
-\sum_{i=1}^{n}\text{TotalNetSellingPrice}_i
+\text{Net Sales} = \sum_{i=1}^{n} \text{TotalNetSellingPrice}_i
 $$
 
 **Units Sold**
 
 $$
-\text{Units Sold}
-=
-\sum_{i=1}^{n}\text{Qty}_i
+\text{Units Sold} = \sum_{i=1}^{n} \text{Qty}_i
 $$
 
 Here, $n$ is the number of transactions included in the selected filters.
@@ -171,10 +164,7 @@ Here, $n$ is the number of transactions included in the selected filters.
 The discount rate measures total discounts relative to gross sales.
 
 $$
-\text{Discount Rate (\%)}
-=
-\frac{\text{Total Discount}}{\text{Gross Sales}}
-\times 100
+\text{Discount Rate} (\%) = \frac{\text{Total Discount}}{\text{Gross Sales}} \times 100
 $$
 
 If gross sales are zero or unavailable, the rate should be treated as undefined.
@@ -184,10 +174,7 @@ If gross sales are zero or unavailable, the rate should be treated as undefined.
 Target achievement compares actual net sales with the corresponding target.
 
 $$
-\text{Target Achievement (\%)}
-=
-\frac{\text{Net Sales}}{\text{Sales Target}}
-\times 100
+\text{Target Achievement} (\%) = \frac{\text{Net Sales}}{\text{Sales Target}} \times 100
 $$
 
 - Above 100%: actual sales exceed the target.
@@ -199,11 +186,7 @@ The target must be aligned with the same period and business dimensions as actua
 ### 4.4 Target Gap
 
 $$
-\text{Target Gap}
-=
-\text{Net Sales}
--
-\text{Sales Target}
+\text{Target Gap} = \text{Net Sales} - \text{Sales Target}
 $$
 
 A positive gap indicates sales above target, while a negative gap indicates a shortfall.
@@ -225,28 +208,17 @@ High sales volume does not necessarily imply high revenue or high profitability.
 When cost data is complete and consistently defined, estimated profit can be calculated as:
 
 $$
-\text{Profit}
-=
-\text{Net Sales}
--
-\text{Total Cost}
+\text{Profit} = \text{Net Sales} - \text{Total Cost}
 $$
 
 $$
-\text{Profit Margin (\%)}
-=
-\frac{\text{Profit}}{\text{Net Sales}}
-\times 100
+\text{Profit Margin} (\%) = \frac{\text{Profit}}{\text{Net Sales}} \times 100
 $$
 
 If total cost consists of raw material and production costs:
 
 $$
-\text{Total Cost}
-=
-\text{Raw Material Cost}
-+
-\text{Production Cost}
+\text{Total Cost} = \text{Raw Material Cost} + \text{Production Cost}
 $$
 
 The source definitions must be checked to prevent overlapping cost components. Missing cost information should not automatically be interpreted as zero.
@@ -256,19 +228,13 @@ The source definitions must be checked to prevent overlapping cost components. M
 Price changes can be calculated as:
 
 $$
-\text{Price Change (\%)}
-=
-\frac{\text{Current Price}-\text{Previous Price}}
-{\text{Previous Price}}
-\times 100
+\text{Price Change} (\%) = \frac{\text{Current Price} - \text{Previous Price}}{\text{Previous Price}} \times 100
 $$
 
 A three-period moving average smooths short-term fluctuations:
 
 $$
-MA_t
-=
-\frac{P_t+P_{t-1}+P_{t-2}}{3}
+MA_t = \frac{P_t + P_{t-1} + P_{t-2}}{3}
 $$
 
 Where $P_t$ represents the price at period $t$. The periods may be daily or monthly, depending on how the data is aggregated.
@@ -305,7 +271,7 @@ The function first removes missing observations, converts the remaining values t
 Conceptually, the input is a sequence of monthly observations:
 
 $$
-y_1,y_2,\ldots,y_n
+y_1, y_2, \ldots, y_n
 $$
 
 Where:
@@ -317,14 +283,15 @@ For sales forecasting, $y_t$ should represent the intended sales metric, such as
 
 For raw material price forecasting, $y_t$ may represent the monthly average price.
 
-**Important:** `fit_forecast()` expects the series index to contain valid datetime values with meaningful monthly positions. It does not aggregate transaction-level data into monthly values itself. That aggregation must happen before the function is called.
+> [!IMPORTANT]
+> `fit_forecast()` expects the series index to contain valid datetime values with meaningful monthly positions. It does not aggregate transaction-level data into monthly values itself. That aggregation must happen before the function is called.
 
 ### 5.3 Step 1 — Estimate the Linear Trend
 
 The model initially fits a straight line to the historical observations.
 
 $$
-\hat{y}_t=a+bt
+\hat{y}_t = a + bt
 $$
 
 Where:
@@ -348,16 +315,16 @@ x = np.arange(n, dtype=float)
 
 The slope indicates the overall direction of the historical trend:
 
-- $b>0$: increasing trend.
-- $b<0$: decreasing trend.
-- $b\approx 0$: relatively flat linear trend.
+- $b > 0$: increasing trend.
+- $b < 0$: decreasing trend.
+- $b \approx 0$: relatively flat linear trend.
 
 A positive slope does not guarantee that future sales will increase. It only describes the fitted historical relationship.
 
 The initial trend is:
 
 $$
-\text{Trend}_t=a+bt
+\text{Trend}_t = a + bt
 $$
 
 This trend is used directly when there is insufficient history for the seasonal model.
@@ -383,7 +350,7 @@ When fewer than 18 observations are available, the model uses a linear trend wit
 When seasonality is enabled, the model first calculates the residuals from the initial linear trend:
 
 $$
-e_t=y_t-\text{Trend}_t
+e_t = y_t - \text{Trend}_t
 $$
 
 A residual is the difference between the observed value and the initial trend estimate.
@@ -393,14 +360,14 @@ For example, if observed sales are higher than the trend in December, the Decemb
 The code groups residuals by calendar month and estimates a seasonal effect for each month using the median residual:
 
 $$
-s_m=\operatorname{median}(e_t\mid \operatorname{month}(t)=m)
+s_m = \text{median}\left(e_t \mid \text{month}(t) = m\right)
 $$
 
 Where:
 
 - $s_m$ is the estimated seasonal effect for calendar month $m$.
 - $e_t$ is a residual from the initial trend.
-- $\operatorname{month}(t)$ identifies the calendar month of observation $t$.
+- $\text{month}(t)$ identifies the calendar month of observation $t$.
 
 The median is less sensitive to unusually large positive or negative residuals than the mean.
 
@@ -409,9 +376,7 @@ The implementation estimates an effect only when a calendar month has at least t
 The seasonal effects are then centered by subtracting their average:
 
 $$
-s_m^{*}
-=
-s_m-\frac{1}{12}\sum_{j=1}^{12}s_j
+s_m^{\ast} = s_m - \frac{1}{12} \sum_{j=1}^{12} s_j
 $$
 
 This adjustment makes the average of the 12 seasonal effects equal to zero. It helps prevent the seasonal component from systematically shifting the overall level of the trend.
@@ -425,42 +390,31 @@ For example, if the model forecasts monthly sales in IDR, the seasonal effects a
 Once seasonal effects have been estimated, the model removes the relevant effect from each historical observation:
 
 $$
-y_t^{*}=y_t-s_{\operatorname{month}(t)}^{*}
+y_t^{\ast} = y_t - s_{\text{month}(t)}^{\ast}
 $$
 
 The deseasonalized series is then fitted with another linear trend:
 
 $$
-\hat{y}_t^{*}=a+bt
+\hat{y}_t^{\ast} = a + bt
 $$
 
 The final fitted value for a historical observation adds the seasonal effect back:
 
 $$
-\hat{y}_t
-=
-a+bt+s_{\operatorname{month}(t)}^{*}
+\hat{y}_t = a + bt + s_{\text{month}(t)}^{\ast}
 $$
 
 The implementation performs this adjustment with:
 
 ```python
-deseasonalized = (
-    y - seasonal_pattern[month_numbers - 1]
-)
+deseasonalized = y - seasonal_pattern[month_numbers - 1]
 
-slope, intercept = np.polyfit(
-    x,
-    deseasonalized,
-    1,
-)
+slope, intercept = np.polyfit(x, deseasonalized, 1)
 
 trend = intercept + slope * x
 
-fitted = (
-    trend
-    + seasonal_pattern[month_numbers - 1]
-)
+fitted = trend + seasonal_pattern[month_numbers - 1]
 ```
 
 This process separates the estimated long-term trend from recurring calendar-month deviations.
@@ -476,16 +430,13 @@ The forecast horizon determines how many future monthly values are generated.
 For a model without seasonality:
 
 $$
-\hat{y}_{n+h}=a+b(n+h-1)
+\hat{y}_{n+h} = a + b(n + h - 1)
 $$
 
 For a model with monthly seasonality:
 
 $$
-\hat{y}_{n+h}
-=
-a+b(n+h-1)
-+s_{\operatorname{month}(n+h)}^{*}
+\hat{y}_{n+h} = a + b(n + h - 1) + s_{\text{month}(n+h)}^{\ast}
 $$
 
 Here, $h$ is the forecast step, starting at 1 for the first future month.
@@ -495,11 +446,7 @@ The trend continues from the fitted historical line. When seasonality is enabled
 The code constructs the future trend positions using:
 
 ```python
-future_x = np.arange(
-    n,
-    n + horizon,
-    dtype=float,
-)
+future_x = np.arange(n, n + horizon, dtype=float)
 
 forecast_values = intercept + slope * future_x
 ```
@@ -522,12 +469,7 @@ The output is intended to support a visual comparison between historical observa
 The function calculates the standard deviation of the historical residuals:
 
 $$
-s_e
-=
-\sqrt{
-\frac{1}{n-1}
-\sum_{t=1}^{n}(y_t-\hat{y}_t)^2
-}
+s_e = \sqrt{\frac{1}{n-1} \sum_{t=1}^{n} (y_t - \hat{y}_t)^2}
 $$
 
 This is the sample standard deviation of the residuals from the fitted model.
@@ -537,17 +479,13 @@ The code uses:
 ```python
 residuals = y - fitted
 
-residual_std = float(
-    np.std(residuals, ddof=1)
-)
+residual_std = float(np.std(residuals, ddof=1))
 ```
 
 It then increases the uncertainty estimate with the forecast horizon:
 
 $$
-u_h
-=
-s_e\sqrt{1+\frac{h}{n}}
+u_h = s_e \sqrt{1 + \frac{h}{n}}
 $$
 
 Where:
@@ -559,35 +497,28 @@ Where:
 The lower and upper bounds are calculated using a multiplier of 1.96:
 
 $$
-L_h=\hat{y}_{n+h}-1.96u_h
+L_h = \hat{y}_{n+h} - 1.96\,u_h
 $$
 
 $$
-U_h=\hat{y}_{n+h}+1.96u_h
+U_h = \hat{y}_{n+h} + 1.96\,u_h
 $$
 
 The value 1.96 is commonly associated with an approximate 95% interval under normality assumptions.
 
-**Important limitation:** These bounds are heuristic, approximate prediction intervals. They are not formal, statistically calibrated 95% prediction intervals. The implementation does not explicitly account for all sources of uncertainty, such as uncertainty in the estimated trend and seasonal effects, changing residual variance, or autocorrelation.
-
-The actual coverage of these intervals has not been established by the code.
+> [!WARNING]
+> These bounds are heuristic, approximate prediction intervals. They are not formal, statistically calibrated 95% prediction intervals. The implementation does not explicitly account for all sources of uncertainty, such as uncertainty in the estimated trend and seasonal effects, changing residual variance, or autocorrelation.
+>
+> The actual coverage of these intervals has not been established by the code.
 
 ### 5.9 Step 7 — Prevent Negative Forecasts
 
 The model clips the forecast and interval bounds to zero:
 
 ```python
-forecast["Forecast"] = (
-    forecast["Forecast"].clip(lower=0)
-)
-
-forecast["Lower"] = (
-    forecast["Lower"].clip(lower=0)
-)
-
-forecast["Upper"] = (
-    forecast["Upper"].clip(lower=0)
-)
+forecast["Forecast"] = forecast["Forecast"].clip(lower=0)
+forecast["Lower"] = forecast["Lower"].clip(lower=0)
+forecast["Upper"] = forecast["Upper"].clip(lower=0)
 ```
 
 This prevents negative predicted sales or prices when the business metric cannot reasonably be negative.
@@ -644,10 +575,7 @@ This requirement is separate from the forecasting model's minimum requirement of
 The function determines the test-set size using:
 
 ```python
-test_size = min(
-    3,
-    max(1, len(series) // 5)
-)
+test_size = min(3, max(1, len(series) // 5))
 ```
 
 This holds out approximately the final 20% of the series, subject to a minimum of one and a maximum of three observations.
@@ -667,10 +595,7 @@ The training period contains the earlier observations. The test period contains 
 The model is fitted using only the training series:
 
 ```python
-forecast, _ = fit_forecast(
-    train,
-    horizon=test_size,
-)
+forecast, _ = fit_forecast(train, horizon=test_size)
 ```
 
 The generated forecast is then compared with the actual observations in the held-out test period.
@@ -682,10 +607,7 @@ This estimates how the model performs when forecasting beyond the end of its tra
 MAE measures the average absolute difference between actual and predicted values.
 
 $$
-MAE
-=
-\frac{1}{n}
-\sum_{t=1}^{n}|y_t-\hat{y}_t|
+MAE = \frac{1}{n} \sum_{t=1}^{n} \left| y_t - \hat{y}_t \right|
 $$
 
 Where:
@@ -697,9 +619,7 @@ Where:
 The implementation is:
 
 ```python
-mae = float(
-    np.mean(np.abs(actual - predicted))
-)
+mae = float(np.mean(np.abs(actual - predicted)))
 ```
 
 MAE is expressed in the same units as the forecast target.
@@ -713,13 +633,7 @@ A lower MAE indicates smaller average absolute errors on the test observations.
 MAPE measures the average absolute prediction error relative to actual values.
 
 $$
-MAPE
-=
-\frac{100}{n}
-\sum_{t=1}^{n}
-\left|
-\frac{y_t-\hat{y}_t}{y_t}
-\right|
+MAPE = \frac{100}{n} \sum_{t=1}^{n} \left| \frac{y_t - \hat{y}_t}{y_t} \right|
 $$
 
 MAPE is commonly interpreted as a percentage error.
@@ -733,10 +647,7 @@ mape = (
     float(
         np.mean(
             np.abs(
-                (
-                    actual[nonzero]
-                    - predicted[nonzero]
-                )
+                (actual[nonzero] - predicted[nonzero])
                 / actual[nonzero]
             )
         ) * 100
@@ -777,7 +688,7 @@ There is no universal MAE or MAPE threshold that guarantees a good forecast. Acc
 The forecast should also be compared with a simple baseline when possible. For example, a naive baseline predicts the last observed value for the next period:
 
 $$
-\hat{y}_{t+1}=y_t
+\hat{y}_{t+1} = y_t
 $$
 
 A model that does not outperform a reasonable baseline may offer limited forecasting value.
@@ -804,10 +715,7 @@ Scenario analysis estimates how outcomes change when selected assumptions are ad
 A simple sales scenario can apply a percentage adjustment to a baseline forecast:
 
 $$
-\text{Scenario Sales}_t
-=
-\text{Baseline Forecast}_t
-\left(1+\frac{r}{100}\right)
+\text{Scenario Sales}_t = \text{Baseline Forecast}_t \left(1 + \frac{r}{100}\right)
 $$
 
 Where $r$ is the assumed percentage adjustment.
